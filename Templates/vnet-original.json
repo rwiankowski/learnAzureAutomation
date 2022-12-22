@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "virtualNetworks_Part6_Demo_VNET_name": {
+        "type": "String"
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2022-05-01",
+        "name": "[parameters('virtualNetworks_Part6_Demo_VNET_name')]",
+        "location": "westeurope",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_Part6_Demo_VNET_name'), 'ApplicationSubnet')]"
+        ],
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "10.0.0.0/16"
+            ]
+          },
+          "dhcpOptions": {
+            "dnsServers": []
+          },
+          "subnets": [
+            {
+              "name": "ApplicationSubnet",
+              "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_Part6_Demo_VNET_name'), 'ApplicationSubnet')]",
+              "properties": {
+                "addressPrefix": "10.0.0.0/24",
+                "serviceEndpoints": [],
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+              },
+              "type": "Microsoft.Network/virtualNetworks/subnets"
+            }
+          ],
+          "virtualNetworkPeerings": [],
+          "enableDdosProtection": false
+        }
+      },
+      {
+        "type": "Microsoft.Network/virtualNetworks/subnets",
+        "apiVersion": "2022-05-01",
+        "name": "[concat(parameters('virtualNetworks_Part6_Demo_VNET_name'), '/ApplicationSubnet')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Part6_Demo_VNET_name'))]"
+        ],
+        "properties": {
+          "addressPrefix": "10.0.0.0/24",
+          "serviceEndpoints": [],
+          "delegations": [],
+          "privateEndpointNetworkPolicies": "Disabled",
+          "privateLinkServiceNetworkPolicies": "Enabled"
+        }
+      }
+    ]
+  }
